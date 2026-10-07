@@ -1,0 +1,27 @@
+-- Coordenadas zero-based verificadas nas grades 15 x 15; preserva conteúdo personalizado.
+UPDATE PalavraBonus SET inicio=78, fim=8 WHERE codPalavraBonus=1 AND palavra='ALGEMA' AND inicio=64 AND fim=9;
+UPDATE PalavraBonus SET inicio=30, fim=165 WHERE codPalavraBonus=2 AND palavra='CHOCARRICE' AND inicio=31 AND fim=166;
+UPDATE PalavraBonus SET inicio=193, fim=181 WHERE codPalavraBonus=3 AND palavra='JURISDICIONAL' AND inicio=194 AND fim=182;
+UPDATE PalavraBonus SET inicio=157, fim=52 WHERE codPalavraBonus=4 AND palavra='EXAUSTOR' AND inicio=158 AND fim=53;
+UPDATE PalavraBonus SET inicio=56, fim=131 WHERE codPalavraBonus=5 AND palavra='MUXOXO' AND inicio=57 AND fim=132;
+UPDATE PalavraBonus SET inicio=15, fim=191 WHERE codPalavraBonus=6 AND palavra='APRENDIZAGEM' AND inicio=16 AND fim=192;
+UPDATE PalavraBonus SET inicio=33, fim=153 WHERE codPalavraBonus=7 AND palavra='QUEROSENE' AND inicio=49 AND fim=154;
+UPDATE PalavraBonus SET inicio=28, fim=19 WHERE codPalavraBonus=8 AND palavra='ASSOBERBAR' AND inicio=29 AND fim=20;
+UPDATE PalavraBonus SET inicio=224, fim=14 WHERE codPalavraBonus=9 AND palavra='DEGENERESCENCIA' AND inicio=225 AND fim=15;
+UPDATE PalavraBonus SET inicio=210, fim=223 WHERE codPalavraBonus=10 AND palavra='ESCLARECIMENTO' AND inicio=211 AND fim=224;
+UPDATE PalavraBonus SET inicio=24, fim=15 WHERE codPalavraBonus=11 AND palavra='SABUGUEIRO' AND inicio=25 AND fim=16;
+UPDATE PalavraBonus SET inicio=168, fim=93 WHERE codPalavraBonus=12 AND palavra='SEMPRE' AND inicio=169 AND fim=94;
+UPDATE PalavraBonus SET inicio=215, fim=65 WHERE codPalavraBonus=13 AND palavra='ARRANHADURA' AND inicio=216 AND fim=66;
+UPDATE PalavraBonus SET inicio=157, fim=162 WHERE codPalavraBonus=14 AND palavra='FINCAR' AND inicio=163 AND fim=158;
+UPDATE PalavraBonus SET inicio=27, fim=111 WHERE codPalavraBonus=15 AND palavra='EXCERTO' AND inicio=28 AND fim=112;
+UPDATE PalavraBonus SET inicio=39, fim=30 WHERE codPalavraBonus=16 AND palavra='DISTINGUIR' AND inicio=40 AND fim=31;
+UPDATE PalavraBonus SET inicio=39, fim=159 WHERE codPalavraBonus=17 AND palavra='DESPENDER' AND inicio=40 AND fim=160;
+UPDATE PalavraBonus SET inicio=139, fim=203 WHERE codPalavraBonus=18 AND palavra='AROMA' AND inicio=140 AND fim=204;
+UPDATE PalavraBonus SET inicio=221, fim=211 WHERE codPalavraBonus=19 AND palavra='SENSACIONAL' AND inicio=222 AND fim=212;
+UPDATE PalavraBonus SET inicio=43, fim=118 WHERE codPalavraBonus=20 AND palavra='BUEIRO' AND inicio=44 AND fim=119;
+UPDATE PalavraBonus SET inicio=58, fim=163 WHERE codPalavraBonus=21 AND palavra='CHINFRIM' AND inicio=59 AND fim=164;
+UPDATE PalavraBonus SET inicio=200, fim=206 WHERE codPalavraBonus=22 AND palavra='BAIXELA' AND inicio=201 AND fim=207;
+UPDATE PalavraBonus SET inicio=109, fim=169 WHERE codPalavraBonus=23 AND palavra='JEJUM' AND inicio=110 AND fim=170;
+UPDATE PalavraBonus SET inicio=84, fim=77 WHERE codPalavraBonus=24 AND palavra='ENCOBRIR' AND inicio=85 AND fim=78;
+UPDATE PalavraBonus SET inicio=115, fim=3 WHERE codPalavraBonus=25 AND palavra='TANGENTE' AND inicio=116 AND fim=4;
+INSERT IGNORE INTO NovelMigration VALUES(7,NOW());

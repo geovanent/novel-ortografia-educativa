@@ -1,0 +1,10 @@
+UPDATE Gabarito SET letraGabarito='xc' WHERE codGabarito=40 AND codTexto=4 AND posicao=10 AND letraGabarito='x';
+UPDATE Gabarito SET letraGabarito='n' WHERE codGabarito=77 AND codTexto=8 AND posicao=7 AND letraGabarito='r';
+UPDATE Gabarito SET letraGabarito='u' WHERE codGabarito=97 AND codTexto=10 AND posicao=7 AND letraGabarito='o';
+UPDATE Gabarito SET letraGabarito='j' WHERE codGabarito=197 AND codTexto=20 AND posicao=7 AND letraGabarito='g';
+UPDATE Gabarito SET letraGabarito='xc' WHERE codGabarito=239 AND codTexto=24 AND posicao=9 AND letraGabarito='x';
+UPDATE Gabarito SET posicao=10 WHERE codGabarito=210 AND codTexto=21 AND posicao=9 AND letraGabarito='e';
+UPDATE Texto SET textoIncompleto=REPLACE(textoIncompleto,'Ame_doin','Ame_doim') WHERE codTexto=7;
+UPDATE Texto SET textoIncompleto=REPLACE(textoIncompleto,'adiquiri_','adquiri_') WHERE codTexto=11;
+UPDATE Texto SET textoIncompleto=REPLACE(textoIncompleto,'d_pensa','d_spensa') WHERE codTexto=13;
+INSERT IGNORE INTO NovelMigration VALUES(6,NOW());

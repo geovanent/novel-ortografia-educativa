@@ -5,3 +5,16 @@
 .project
 desktop.ini
 docker-compose.yml
+
+.playwright-mcp
+.codex
+.agents
+.env
+.env.*
+docs/screenshots
+
+application/controllers/Testes.php
+tests
+assets/img/uploads/*
+!assets/img/uploads/.htaccess
+!assets/img/uploads/.gitkeep

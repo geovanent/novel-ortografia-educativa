@@ -35,17 +35,17 @@
 					<?php
 						if ($erro){
 							echo '<script language="javascript">';							
-								echo 'function mensagemErro(){';
-									echo 'alert("Não foi possível realizar seu cadastro. Por favor, tente novamente.");';
-								echo '}';
-								echo 'onload=mensagemErro();';								
+
+                                    echo 'Novel.notify("Não foi possível realizar seu cadastro. Por favor, tente novamente.");';
+
+
 							echo '</script>';
 						} else {
 							echo '<script language="javascript">';							
-								echo 'function mensagemErro(){';
-									echo 'alert("Cadastro efetuado! Faça login para jogar.");';
-								echo '}';
-								echo 'onload=mensagemErro();';								
+
+                                    echo 'Novel.notify("Cadastro efetuado! Faça login para jogar.");';
+
+
 							echo '</script>';
 						}
 					?>		

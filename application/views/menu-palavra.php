@@ -1,45 +1,40 @@
 	<!-- Aqui é a área do conteúdo -->
-	<div id="conteudo" class="row">
-		<div class="row">
-				<h3 class="titulo-menu">Nível Palavra</h3>
-		</div>		
-		<div id="imagens-menu" class="centered" >
+    <div id="conteudo" class="novel-level-screen">
+        <section class="novel-level-hero">
+            <p class="novel-eyebrow">Missões de ortografia</p>
+            <h3 class="titulo-menu">Escolha um desafio de palavras</h3>
+            <p class="novel-level-copy">Complete as lacunas, ganhe pontos e avance pela Academia de Novéis.</p>
+        </section>
+        <div id="imagens-menu" class="novel-challenge-grid" >
 	
 			<?php
 				$tamGrafemasBD = count($grafemasCadastrados);
 				$tamGrafemasJogados = count($grafemasJogados);				
 
-				echo '<div class="row afastado-1pc">';
-
 				for($i = 0; $i<$tamGrafemasBD; $i++) {
-					if ($i == 4){
-						echo '</div>';
-						echo '<div class="row afastado-1pc">';
-					}
-
-					echo '<div class="col-md-3 col-xs-3">';
-						echo '<div class="row">';
-							echo '<div class="col-md-12 col-xs-12">';								 
-								$url = 'palavra/jogarPalavra/'.$grafemasCadastrados[$i]->tipoGrafema;
-								echo '<a href="'.base_url($url).'">';
-									$url = 'assets/img/grafemas/palavra/'.$grafemasCadastrados[$i]->tipoGrafema.'.png';
-									echo '<img class="img-responsive aa" src="'.base_url($url).'">';		
-								echo '</a>';
-							echo '</div>';
-						echo '</div>';
-						echo '<div class="row">';
-							echo '<div class="col-md-12 col-xs-12">';
+                    $tipoGrafema = $grafemasCadastrados[$i]->tipoGrafema;
+                    $concluido = FALSE;
 								for ($j=0; $j < $tamGrafemasJogados; $j++) { 
-									if (($grafemasJogados[$j]->tipoGrafema == $grafemasCadastrados[$i]->tipoGrafema) && $grafemasJogados[$j]->pontuacao > 20){
-										echo '<span class="glyphicon glyphicon-check branco" aria-hidden="true"/>';			
+                        if (($grafemasJogados[$j]->tipoGrafema == $tipoGrafema) && $grafemasJogados[$j]->pontuacao > 20){
+                            $concluido = TRUE;
 									}								
 								}
-							echo '</div>';	
-						echo '</div>';
-					echo '</div>';
+                    $url = 'palavra/jogarPalavra/'.rawurlencode($tipoGrafema);
+                    $imagem = 'assets/img/grafemas/palavra/'.$tipoGrafema.'.png';
+                    $rotulo = strtoupper(str_replace('_', ' / ', $tipoGrafema));
+
+                    echo '<a class="novel-challenge-card" href="'.base_url($url).'">';
+                        echo '<span class="novel-stage-number">'.($i + 1).'</span>';
+                        if ($concluido) {
+                            echo '<span class="novel-complete-badge"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Concluída</span>';
 				}
-				echo '</div>';
+                        echo '<img class="img-responsive aa" src="'.novel_image_url($imagem).'" alt="Missão '.$rotulo.'">';
+                        echo '<strong>'.$rotulo.'</strong>';
+                        echo '<small>Treino de palavra</small>';
+                    echo '</a>';
+                }
 			?>
+        </div>
 		
 		<input type="hidden" id="abrirModalGabarito" value="<?php echo ($abrirModalGabarito); ?>">
 		<input type="hidden" id="abrirModalHistoria" value="<?php echo (isset($abrirModalHistoria[0]) ? $abrirModalHistoria[0] : ''); ?>">
@@ -66,7 +61,7 @@
 									echo '<th class="titulo"> Gabarito </th>';
 									echo '<th class="titulo"> Resposta correta</th>';									
 									echo '<th class="titulo"> Explicação </th>';
-								echo '<tr>';
+                                echo '</tr>';
 								$i = 0;
 								foreach ($inputJogador as $input => $value) {
 									echo '<tr>';
@@ -93,29 +88,4 @@
 	  </div>
 	</div>
 
-<?php
-	if ($erro){
-		echo '<script language="javascript">';
-			echo 'function mensagemErro(){';
-				echo 'alert("Ops! Moncoso provocou um distúrbio nas palavras... \nTente novamente!");';
-			echo '}';
-			echo 'onload=mensagemErro();';
-		echo '</script>';
-	}
-?>
-
-
-
-<script type="text/javascript">
-
-	var abrir = document.getElementById("abrirModalGabarito").value;
-		if(abrir){
-				mostrarGabarito();	
-		} 
-
-	function mostrarGabarito(){		
-		$("#modalGabarito").modal();		
-	}
-	
-
-</script>
+<?php if (!empty($erro)) { echo novel_notify('Não foi possível abrir este treino. Escolha outro desafio ou tente novamente.', 'warning'); } ?>

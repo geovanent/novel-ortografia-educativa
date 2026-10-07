@@ -27,3 +27,9 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 *.sublime-project
 
 .playwright-mcp/
+.env
+.env.*
+!.env.example
+assets/img/uploads/*
+!assets/img/uploads/.htaccess
+!assets/img/uploads/.gitkeep

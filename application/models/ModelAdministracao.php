@@ -45,10 +45,10 @@ class modelAdministracao extends CI_Model {
 			return TRUE;
 		}
 
-		if ($senha === $admin->senha OR md5($senha) === $admin->senha) {
+		if (password_get_info($admin->senha)['algoName'] === 'unknown' && (preg_match('/^[a-f0-9]{32}$/iD', $admin->senha) ? hash_equals(strtolower($admin->senha), md5($senha)) : hash_equals($admin->senha, $senha))) {
 			$this->db->where('codAdministrador', $admin->codAdministrador);
 			$this->db->update('Administrador', array(
-				'senha' => password_hash($senha, PASSWORD_DEFAULT),
+				'senha' => password_hash($senha, PASSWORD_BCRYPT),
 			));
 			return TRUE;
 		}

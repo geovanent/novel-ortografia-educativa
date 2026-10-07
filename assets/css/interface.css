@@ -1,0 +1,114 @@
+/* Componentes compartilhados: atividades, diálogos e notificações. */
+:root { --novel-text: #20314b; --novel-muted: #5d6c82; --novel-primary: #2359bd; --novel-primary-dark: #19458f; --novel-radius: 16px; --novel-shadow: 0 10px 32px rgba(24, 55, 99, .08); }
+html { overflow-wrap: break-word; }
+body { color: var(--novel-text); }
+.novel-main { flex: 1; width: 100%; padding-bottom: 24px; }
+.novel-main > .container-fluid { max-width: 1240px; }
+.novel-navbar { width: 100%; margin: 20px 0 28px; border-radius: 18px; backdrop-filter: none; box-shadow: 0 6px 22px rgba(24,55,99,.06); }
+.novel-navbar .navbar-brand, .novel-navbar .navbar-nav > li > a, .novel-user-trigger { font-family: var(--novel-font); }
+.novel-navbar .navbar-brand { font-weight: 800; font-size: 30px; }
+.novel-navbar .navbar-nav > li > a { font-size: 14px; }
+.novel-user-name { display: inline-block; max-width: 160px; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
+.novel-navbar-menu { min-width: 0; }
+.novel-footer h5 { font: 12px/1.6 var(--novel-font); color: var(--novel-muted); }
+.novel-mission-hero, .novel-level-hero { box-shadow: none; border-radius: 20px; background: linear-gradient(110deg,#204d9c,#306db5); }
+.novel-mission-hero h1.titulo-menu { font-size: clamp(28px,3.2vw,42px); line-height: 1.15; }
+.novel-mission-hero .novel-lead { color: #fff; font-size: 17px; font-weight: 400; }
+.novel-level-hero .titulo-menu { font-size: clamp(26px,3vw,36px); }
+.novel-map { gap: 14px; }
+.novel-map-stage { min-height: 280px; padding: 26px 20px; border-radius: 18px; box-shadow: none; }
+.novel-map-stage img { max-width: 150px; border-radius: 12px; }
+.novel-map-stage strong { font-size: 27px; }
+.novel-map-stage small, .novel-challenge-card small, .novel-level-copy { font-family: var(--novel-font); font-weight: 400; line-height: 1.55; }
+.novel-challenge-grid { gap: 16px; }
+.novel-challenge-card { min-height: 220px; padding: 24px 18px; border-radius: 16px; box-shadow: none; }
+.novel-challenge-card img { max-width: 128px; max-height: 108px; filter: none; }
+.novel-challenge-card strong { font-size: 23px; }
+.novel-map-stage:hover, .novel-challenge-card:hover { transform: translateY(-2px); box-shadow: var(--novel-shadow); }
+.novel-auth-hero { min-height: 420px; box-shadow: none; }
+.novel-auth-hero p:not(.novel-eyebrow) { font-family: var(--novel-font); font-size: 19px; font-weight: 400; line-height: 1.65; }
+.novel-auth-card, .novel-form-card { box-shadow: var(--novel-shadow); border-radius: 20px; }
+.form-control { box-shadow: none; border-radius: 10px; }
+.btn { min-height: 44px; padding: 10px 18px; border-radius: 10px; font-weight: 600; box-shadow: none; }
+.btn-success, .btn-primary { background: #2359bd; border-color: #2359bd; color: #fff; }
+.btn-success:hover, .btn-primary:hover { background: #19458f; }
+.btn-default { color: #284366; border-color: #cbd7e8; background: #fff; }
+.btn-danger { background: #b33542; color: #fff; }
+.btn-link { color: #4e627e; text-decoration: underline; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid #ad5800; outline-offset: 3px; }
+.novel-activity { max-width: 900px; margin: 0 auto; padding: 28px clamp(16px,4vw,44px); text-align: left; background: #fff; border: 1px solid #dde5f1; border-radius: 22px; box-shadow: var(--novel-shadow); }
+.novel-activity-heading { margin-bottom: 28px; }
+.novel-activity-heading h1 { margin: 8px 0 12px; font-size: clamp(26px,3vw,36px); }
+.novel-activity-heading p:last-child { color: var(--novel-muted); font: 16px/1.6 var(--novel-font); }
+.novel-activity-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; border-top: 1px solid #e6ecf4; border-bottom: 1px solid #e6ecf4; margin-bottom: 28px; font-weight: 600; }
+.novel-clock { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--novel-muted); font-size: 13px; }
+.novel-activity #tempo { width: 9ch; font: 14px/1.5 var(--novel-font); color: var(--novel-text); opacity: 1; text-align: right; text-shadow: none; }
+.novel-exercise-carousel .carousel-inner { min-height: 260px; padding: 8px 0 24px; }
+.novel-exercise-rule { font: 14px/1.6 var(--novel-font); color: var(--novel-muted); margin-bottom: 22px; }
+.novel-exercise-prompt { font: 500 19px/1.65 var(--novel-font); color: var(--novel-text); margin: 0 0 28px; text-align: left; }
+.novel-word-answer { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px; margin: 36px 0; font-size: clamp(25px,4.5vw,42px); font-weight: 700; }
+.novel-word-answer span { min-width: 0; overflow-wrap: anywhere; }
+.novel-activity .input-palavra, .novel-activity .input-texto { width: 2.8ch; min-width: 44px; height: 52px; border: 2px solid #becde3; border-radius: 10px; background: #f4f7fd; color: #20314b; text-align: center; font: 600 24px/1 var(--novel-font); }
+.novel-activity .input-texto { height: 42px; font-size: 21px; vertical-align: baseline; margin: 2px; }
+.novel-word-image { display: block; max-height: 170px; max-width: 100%; margin: 0 auto; }
+.novel-reading { font: 18px/2.5 var(--novel-font); text-align: left; margin-bottom: 28px; }
+.novel-exercise-navigation { display: flex; justify-content: space-between; gap: 12px; padding-top: 20px; border-top: 1px solid #e6ecf4; }
+.novel-activity-actions { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.novel-submit-step { text-align: center; padding: 32px 0; }
+.novel-submit-step h2 { font-size: 26px; }
+.novel-submit-step p { font: 16px/1.6 var(--novel-font); color: var(--novel-muted); }
+.novel-alternatives { border: 0; min-width: 0; }
+.novel-alternatives legend { border: 0; }
+.novel-alternative { display: flex; align-items: flex-start; gap: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #d7e1ef; border-radius: 12px; cursor: pointer; font: 16px/1.5 var(--novel-font); }
+.novel-alternative input { width: 20px; height: 20px; margin: 2px 0 0; flex-shrink: 0; accent-color: #2359bd; }
+.novel-alternative:has(input:checked) { border-color: #2359bd; background: #eef4ff; }
+.novel-rule-carousel img { max-height: 65vh; margin: 0 auto; }
+.modal-content { border-radius: 18px; box-shadow: 0 20px 80px rgba(17,32,55,.18); }
+.modal-header .modal-title { font-size: 24px; }
+.novel-notifications { position: fixed; right: 22px; bottom: 22px; width: min(420px,calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; z-index: 1100; display: flex; flex-direction: column; gap: 12px; }
+.novel-toast { display: flex; align-items: flex-start; gap: 12px; background: #fff; color: #20314b; padding: 18px 14px 18px 20px; border: 1px solid #d5dfef; border-left: 5px solid #2359bd; border-radius: 14px; box-shadow: 0 12px 36px rgba(20,45,85,.18); }
+.novel-toast > div { flex: 1; min-width: 0; }
+.novel-toast strong { font: 700 15px/1.4 var(--novel-font); }
+.novel-toast p { font: 14px/1.6 var(--novel-font); margin: 6px 0 0; white-space: pre-line; }
+.novel-toast-error { border-left-color: #b33542; }
+.novel-toast-warning { border-left-color: #b6740c; }
+.novel-toast-success { border-left-color: #18734e; }
+.novel-toast-close { flex-shrink: 0; width: 36px; height: 36px; border: 0; border-radius: 8px; background: #f0f4fa; color: #43536d; font-size: 24px; line-height: 1; }
+.novel-confirm { width: min(460px,calc(100vw - 32px)); border: 1px solid #d7e1ef; border-radius: 20px; padding: 28px; color: #20314b; box-shadow: 0 24px 80px rgba(20,45,85,.2); }
+.novel-confirm::backdrop { background: rgba(17,32,55,.55); }
+.novel-confirm h2 { font-size: 26px; margin: 0 0 14px; }
+.novel-confirm p { font: 16px/1.65 var(--novel-font); color: #5d6c82; }
+.novel-confirm-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+@media(max-width:767px) {
+ .novel-navbar { margin: 12px 0 22px; padding: 10px 14px; }
+ .novel-navbar-branding { display: flex; align-items: center; width: 100%; margin: 0; }
+ .novel-navbar .navbar-toggle { margin-left: auto; margin-right: 0; }
+ .novel-main > .container-fluid { padding: 0 16px; }
+ .novel-activity { padding: 22px 16px; border-radius: 18px; }
+ .novel-activity-heading { margin-bottom: 20px; }
+ .novel-exercise-prompt { font-size: 17px; }
+ .novel-activity-actions { flex-direction: column; align-items: stretch; }
+ .novel-word-answer { font-size: 27px; }
+ .novel-mission-hero, .novel-level-hero { padding: 26px 20px; }
+ .novel-mission-hero img { width: 110px; height: 110px; }
+ .novel-challenge-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+ .novel-challenge-card { min-height: 190px; }
+ .novel-challenge-card strong { font-size: 20px; overflow-wrap: anywhere; }
+ .novel-stage-number { width: 30px; height: 30px; font-size: 14px; }
+ .novel-complete-badge { position: static; align-self: flex-end; font-size: 11px; }
+ .novel-notifications { right: 16px; bottom: 16px; }
+ .novel-confirm-actions { flex-direction: column; }
+ .novel-auth-page { gap: 16px; padding: 16px 0; }
+ .novel-auth-hero { min-height: 0; padding: 22px 20px; }
+ .novel-auth-hero img { display: none; }
+ .novel-auth-hero h1 { font-size: 40px; margin: 10px 0; }
+ .novel-auth-hero p:not(.novel-eyebrow) { font-size: 16px; }
+ .novel-auth-card { padding: 24px; }
+ .novel-auth-card h2 { font-size: 25px; }
+}
+@media(prefers-reduced-motion:reduce) { *, *::before, *::after { transition: none; animation: none; scroll-behavior: auto; } }
+
+.novel-admin-skills {display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px; margin-bottom:20px;}
+.novel-admin-skills legend {grid-column:1/-1;}
+.novel-admin-skills label {display:flex; align-items:center; gap:10px; min-height:44px; margin:0; padding:10px; border:1px solid var(--novel-border); border-radius:10px;}
+.novel-admin-skills input {width:20px; height:20px; margin:0; flex-shrink:0;}

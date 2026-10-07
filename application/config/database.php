@@ -78,8 +78,8 @@ $query_builder = TRUE;
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => getenv('DB_HOST') ?: 'localhost',
-	'username' => getenv('DB_USER') ?: 'root',
-	'password' => getenv('DB_PASSWORD') !== FALSE ? getenv('DB_PASSWORD') : 'admnovel',
+	'username' => getenv('DB_USER') ?: 'novel_app',
+	'password' => getenv('DB_PASSWORD') !== FALSE ? getenv('DB_PASSWORD') : '',
 	'database' => getenv('DB_NAME') ?: 'novel',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
@@ -93,7 +93,7 @@ $db['default'] = array(
 	'swap_pre' => '',
 	'encrypt' => FALSE,
 	'compress' => FALSE,
-	'stricton' => FALSE,
+	'stricton' => TRUE,
 	'failover' => array(),
-	'save_queries' => TRUE
+	'save_queries' => FALSE
 );

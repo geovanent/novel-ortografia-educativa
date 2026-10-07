@@ -43,7 +43,7 @@
 								    		<label for="imagem">Imagem atual:</label>
 								    	</div>
 								   		<div class="col-md-8 col-xs-8">
-								   			<img src="<?php echo base_url('$imagem');?>"> <!-- TEM QUE VER COMO VAI FICAR ISSO -->
+                                            <img src="<?php echo novel_image_url(isset($imagem) ? $imagem : ''); ?>"> <!-- TEM QUE VER COMO VAI FICAR ISSO -->
 								   		</div>
 								  	</div>
 							  	</div>

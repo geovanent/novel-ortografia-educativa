@@ -1,13 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Principal extends CI_Controller {
+class Principal extends MY_Controller {
 
 	public function __construct() {
         parent::__construct();
         $this->load->helper('array');
         $this->load->model('modelJogador');
-        $this->load->model('modelHistoria');
+        $this->load->model('ModelConta','accounts');
     }
 
 
@@ -34,34 +34,18 @@ class Principal extends CI_Controller {
 		}
 	}
 
-	public function fazerLogin(){
+	public function fazerLogin() {
+        $this->postOnly();
+        $login=$this->input->post('login'); $password=$this->input->post('senha');
+        $valid=is_string($login)&&is_string($password)&&strlen($login)<=20&&strlen($password)<=72;
+        $allowed=$this->accounts->allow('login-ip',$this->input->ip_address(),30);
+        $account=$valid&&$allowed?$this->modelJogador->fazerLogin(trim($login),$password):FALSE;
+        if($account) {
+            $this->session->unset_userdata(array('codAdministrador')); $this->session->sess_regenerate(TRUE);
+            $account['logged_in']=TRUE; $account['avatar']=novel_avatar($account['avatar']); $this->session->set_userdata($account); redirect('menu');
+        } else { $this->render('index',array('erro'=>TRUE,'enviou'=>TRUE,'email'=>NULL,'loginValue'=>is_string($login)?$login:'')); }
 
-		//Se o jogador já estiver logado, redireciona para o menu principal
-		if ($this->session->userdata('logged_in')) {
-                redirect('menu');
-        } else{ 
-			//Salva o login e a senha digitados no array $dados
-		    $dados = $this->input->post(array('login', 'senha'));
-
-		    //tenta fazer o login
-		    $login = $this->modelJogador->fazerLogin($dados['login'], $dados['senha']);
-		    	        
-		    if($login){	        	
-		    	$this->session->set_userdata(array(
-	                    'codJogador' => $login['codJogador'],
-	                    'avatar' => $login['avatar'],
-	                    'nome' => $login['nome'],	                    
-	                    'logged_in' => TRUE,
-	                    'nivel' => $login['nivel'],
-	                    'experiencia' => $login['experiencia'],
-	                ));
-		    	redirect('menu');
-		    } else {
-		    	$pagina = array('tela' => 'index', 'erro'=> TRUE, 'abrirModalHistoria'=> FALSE, 'enviou' => TRUE, 'email'=>NULL, 'conquista' => 0,);
-				$this->load->view('construtor', $pagina);
-		    }
-		} 		
-	}
+    }
 
 	public function logoff() {
 
@@ -69,45 +53,20 @@ class Principal extends CI_Controller {
         redirect('login');
     }
 
-	public function recuperarSenha()
-	{
-		if ($this->session->userdata('logged_in')) {
-            redirect('menu');
-        } else {	
-        	$email = $this->input->post();
+	public function recuperarSenha() {
+        $this->postOnly();
+        $this->accounts->resetRequest($this->input->post('email'));
+        $this->render('index',array('email'=>'solicitado','enviou'=>TRUE));
 
-        	$existe = $this->modelJogador->verificarEmailCadastrado($email['email']);
+    }
 
-        	if($existe){
-	        	$senha = $this->modelJogador->recuperarSenha($email['email']);
-
-	        	$this->load->library('email');		
-	        	$this->email->from("novel.noreply@gmail.com", 'Novel');
-				$this->email->subject("Esqueceu a senha?");			
-				$this->email->to($email['email']); 
-				$this->email->message("Reenvio de senha. <br/><br/>Sua nova senha é ".$senha.".<br/><br/>Você pode alterar a sua senha após fazer o login, clicando em Minha Conta.<br/><br/>Atenciosamente, <br/><br/>Equipe Novel.");
-				$enviou  = $this->email->send();											
-				$pagina = array('tela' => 'index', 'erro'=> FALSE, 'abrirModalHistoria'=> FALSE, 'enviou' => $enviou, 'email'=>$email['email'], 'conquista' => 0,);
-					$this->load->view('construtor', $pagina);				
-        	}
-		}
-	}
-
-	public function menu()
-	{				
-		if ($this->session->userdata('logged_in')) {		
-        	$pagina = array('tela' => 'menu', 'linkNovel'=> 'menu', 'linkLogoff'=>'sair', 'abrirModalHistoria'=> FALSE, 'conquista' => 0);
-			$this->load->view('construtor', $pagina);    
-        } else {
-			redirect('login');
-		}
-	}
-
-	public function controle()
-	{
-		$pagina = array('tela' => 'controle');
-		$this->load->view('construtor', $pagina);
-	}
+    public function menu() {
+        $id=$this->player();$this->load->model('ModelRodada','rounds');$this->load->model('ModelBonus','bonuses');
+        $known=$this->rounds->masteredWords($id);$next=NULL;
+        foreach($this->db->order_by('codGrafema')->get('Grafema')->result() as $g) if(!in_array($g->tipoGrafema,$known,TRUE)) {$next=$g->tipoGrafema;break;}
+        $pending=$this->db->where('codJogador',$id)->where_in('modo',array('palavra','texto','teste'))->where('resultado',NULL)->where('inicio >',time()-86400)->order_by('inicio','DESC')->get('Tentativa')->row();
+        $this->render('menu',array('nextSkill'=>$next,'pending'=>$pending,'availableBonus'=>$this->bonuses->available($id)));
+    }
 
 	public function sobre()
 	{
@@ -133,82 +92,25 @@ class Principal extends CI_Controller {
 		}
 	}
 
-	public function realizarCadastro(){
-		if ($this->session->userdata('logged_in')) {
-        	redirect('menu');    
-        } else {
-        	$dados = $this->input->post();
-        	$existe = $this->modelJogador->verificarEmailCadastrado($dados['email']);
+	public function realizarCadastro() {
+        $this->postOnly();
+        try {
+            if(!$this->accounts->allow('register-ip',$this->input->ip_address(),10)) throw new InvalidArgumentException('Muitas tentativas. Aguarde alguns minutos.');
+            $data=$this->input->post(); $this->accounts->register($data);
+            $account=$this->modelJogador->fazerLogin($data['login'],$data['senha1']);
+            $this->session->sess_regenerate(TRUE); $account['logged_in']=TRUE; $this->session->set_userdata($account); redirect('menu');
+        } catch(InvalidArgumentException $e) { $this->render('cadastrar-jogador',array('existe'=>FALSE,'formError'=>$e->getMessage(),'formValues'=>$this->input->post(array('nome','email','login','avatar')))); }
+        catch(Throwable $e) {log_message('error','Falha ao cadastrar conta.');$this->render('cadastrar-jogador',array('existe'=>FALSE,'formError'=>'Não foi possível cadastrar. Tente novamente.'));}
 
+    }
 
-        	if ($existe){
-        		$pagina = array('tela' => 'cadastrar-jogador', 'erro' => FALSE, 'existe'=> TRUE, 'abrirModalHistoria'=> FALSE, 'conquista' => 0,);
-				$this->load->view('construtor', $pagina);
-        	} else {
-        		$retorno = $this->modelJogador->cadastrarJogador($dados);	        		
-				if($retorno){					
-					$this->loginCadastro($dados['login'], $dados['senha1']);					
-				} else {
-					$pagina = array('tela' => 'cadastrar-jogador', 'erro' => TRUE, 'existe' => FALSE, 'abrirModalHistoria'=> FALSE, 'conquista' => 0,);
-					$this->load->view('construtor', $pagina);		
-				}
-        	}
-		}		
-	}
-
-	public function loginCadastro($login, $senha){
-		$logou = $this->modelJogador->fazerLogin($login, $senha);		
-		    if($logou){	        	
-		    	$this->session->set_userdata(array(
-	                    'codJogador' => $logou['codJogador'],
-	                    'avatar' => $logou['avatar'],
-	                    'nome' => $logou['nome'],	                    
-	                    'logged_in' => TRUE,
-	                    'nivel' => $logou['nivel'],
-	                    'experiencia' => $logou['experiencia'],
-	                ));
-		    	$this->modelJogador->conquistarEntrada($logou['codJogador']);
-		    	redirect('menu');
-		    } else {
-		    	$pagina = array('tela' => 'index', 'erro'=> TRUE, 'abrirModalHistoria'=> FALSE, 'conquista' => 0,);
-				$this->load->view('construtor', $pagina);
-		    }
-	}
-
-	public function meusPontos(){
-
-		if ($this->session->userdata('logged_in')){
-			
-			$codJogador = $this->session->userdata('codJogador');
-			$dadosPalavras = $this->modelJogador->buscarHistoricoPalavra($codJogador);
-			$dadosTestes = $this->modelJogador->buscarHistoricoTeste($codJogador);
-			$dadosTextos = $this->modelJogador->buscarHistoricoTexto($codJogador);
-			$tempoTotal = $this->modelJogador->buscarTempoTotal($codJogador);
-			$experiencia = $this->modelJogador->buscarExperienciaJogador($codJogador);
-			$conquistas = $this->modelJogador->buscarConquistasJogador($codJogador);
-			$avatar = $this->session->userdata('avatar');
-
-
-			$pagina = array('tela' => 'meus-pontos', 
-				'erro' => FALSE,
-				'abrirModalHistoria'=> FALSE,
-				'dadosPalavras' => $dadosPalavras,
-				'dadosTestes' =>$dadosTestes,
-				'dadosTextos' => $dadosTextos,
-				'tempoTotal' =>$tempoTotal,
-				'experiencia' =>$experiencia,
-				'conquistas' =>$conquistas,
-				'linkNovel'=> 'menu', 
-				'linkLogoff'=>'sair',
-				'conquista' => 0,
-				'avatar' => $avatar,	
-				);
-			
-			$this->load->view('construtor', $pagina);
-		} else {
-			redirect('login');
-		}
-	}
+    public function meusPontos() {
+        $id=$this->player();
+        $skills=$this->db->query('SELECT g.tipoGrafema, COUNT(*) total, SUM(res.acertou) correct FROM Resposta res JOIN Rodada r ON r.codRodada=res.codRodada LEFT JOIN Grafema g ON g.codGrafema=res.codGrafema WHERE r.codJogador=? GROUP BY res.codGrafema,g.tipoGrafema',array($id))->result();
+        $attempts=$this->db->where('codJogador',$id)->where_in('modo',array('palavra','texto','teste'))->where('resultado IS NOT NULL',NULL,FALSE)->order_by('fim','DESC')->limit(20)->get('Tentativa')->result();
+        $earned=$this->db->select('c.*')->from('Conquista c')->join('ConquistaJogador cj','cj.codConquista=c.codConquista')->where('cj.codJogador',$id)->get()->result();
+        $this->render('meus-pontos',array('skills'=>$skills,'attempts'=>$attempts,'earnedAchievements'=>$earned,'playerData'=>$this->db->where('codJogador',$id)->get('Jogador')->row()));
+    }
 
 	public function minhaConta(){
 		if ($this->session->userdata('logged_in')){
@@ -231,63 +133,49 @@ class Principal extends CI_Controller {
 		}
 	}
 
-	public function editarCadastro(){
+	public function editarCadastro() {
+        $this->postOnly(); $player=$this->player();
+        try { $clean=$this->accounts->validateProfile($this->input->post(),$player);
+            if(!$this->db->where('codJogador',$player)->update('Jogador',$clean)) throw new InvalidArgumentException('Não foi possível salvar. Confira login e e-mail.');
+            $this->session->set_userdata('nome',$clean['nome']);$this->notice('Seus dados foram atualizados.','success');
+        } catch(InvalidArgumentException $e) {$this->notice($e->getMessage());}
+        redirect('minha-conta');
 
-		$dados = $this->input->post();
-		$codJogador = $this->session->userdata('codJogador');
-		$editou = $this->modelJogador->editarCadastroJogador($dados, $codJogador);
-		if ($editou){
-			echo '<script>alert("Seus dados foram alterados!");';
-			echo 'window.location="'.base_url('menu').'";';
-			echo '</script>';
-			
-		} else {
-			echo '<script>alert("Seus dados não foram alterados. Por favor, tente novamente!");';
-			echo 'window.location="'.base_url('menu').'";';
-			echo '</script>';			
-		}
-	}
-	
-	public function bonus(){
-		$codJogador = $this->session->userdata('codJogador');						
-		$experiencia = $this->session->userdata('experiencia');			
+    }
 
-		$nivel = $this->uri->segment(3);
-	    $nivel = urldecode($nivel);
-		$bonus = $this->modelHistoria->buscarBonus($experiencia, $codJogador);						
-	
-		$pagina = array(
-		'tela' => 'bonus', 
-		'linkNovel'=> 'menu', 
-		'linkLogoff'=>'sair', 				
-		'abrirModalHistoria'=> FALSE,												
-		'conquista' => 0,
-		'bonus'=>$bonus,
-		'nivel'=>$nivel,
-		);
-		$this->load->view('construtor', $pagina);
-	}
-
-	public function inserirBonus(){
-		$dados = $this->input->post();			
-		$correcao = NULL;
-		$tela = NULL;		
-			switch ($dados['nivel']) {
-				case '0':
-					$tela = "principal/index";
-				case '1':
-					$tela = "principal/index";
-					break;
-				case '2':
-					$tela = "principal/index";
-				default:
-					$tela = "principal/index";
-					break;
-			}
-		if (count($dados) != 2){
-			$correcao = $this->modelHistoria->corrigirBonus($dados);			
-			unset($correcao[0]);			
-		} 
-		redirect($tela);
-	}
+    public function alterarSenha() {
+        $this->postOnly(); $player=$this->player();
+        try {
+            if(!$this->accounts->allow('password-change',(string)$player,5)) throw new InvalidArgumentException('Muitas tentativas. Aguarde alguns minutos.');
+            $current=$this->input->post('senhaAtual'); $p=$this->db->where('codJogador',$player)->get('Jogador')->row();
+            if(!is_string($current)||strlen($current)>72||!$this->modelJogador->fazerLogin($p->login,$current)) throw new InvalidArgumentException('A senha atual não confere.');
+            $hash=$this->accounts->password($this->input->post('senha1'),$this->input->post('senha2'));
+            if(!$this->db->where('codJogador',$player)->update('Jogador',array('senha'=>$hash))) throw new RuntimeException('Falha ao salvar senha.');
+            $this->session->sess_regenerate(TRUE);$this->notice('Senha atualizada.','success');
+        } catch(InvalidArgumentException $e) {$this->notice($e->getMessage());}
+        redirect('minha-conta');
+    }
+    public function redefinirSenha($token='') {
+        $error='';
+        if($this->input->method()==='post') {
+            try { $this->accounts->reset($token,$this->input->post('senha1'),$this->input->post('senha2'));$this->notice('Senha redefinida. Entre com sua nova senha.','success');redirect('login'); }
+            catch(InvalidArgumentException $e) {$error=$e->getMessage();}
+        }
+        $this->render('redefinir-senha',array('token'=>$token,'formError'=>$error));
+    }
+    public function bonus() {
+        $id=$this->player();$this->load->model('ModelBonus','bonuses');
+        $data=$this->bonuses->prepare($id);
+        if(!$data) {$this->notice('Você já concluiu os bônus disponíveis.','info');redirect('menu');return;}
+        $this->render('bonus',$data);
+    }
+    public function inserirBonus() {
+        $this->postOnly();$id=$this->player();$this->load->model('ModelBonus','bonuses');
+        try {
+            $positions=$this->input->post('posicoes');$r=$this->bonuses->complete($id,$this->input->post('roundToken'),$positions===NULL?array():$positions);
+            $p=$this->db->where('codJogador',$id)->get('Jogador')->row();$this->session->set_userdata('experiencia',$p->experiencia);$this->notice('Bônus concluído: '.$r['points'].' pontos.','success');
+        } catch(InvalidArgumentException $e) {$this->notice($e->getMessage());}
+        catch(Throwable $e) {log_message('error','Falha ao concluir bônus.');$this->notice('Não foi possível salvar o bônus.');}
+        redirect('menu');
+    }
 }

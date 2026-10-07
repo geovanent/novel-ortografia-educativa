@@ -11,7 +11,10 @@ services:
       MYSQL_DATABASE: novel
     volumes:
       - db_data:/var/lib/mysql
-      - ./novel_create_insert.sql:/docker-entrypoint-initdb.d/01-novel.sql:ro
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/content.sql:/docker-entrypoint-initdb.d/02-content.sql:ro
+      - ./database/demo.sql:/docker-entrypoint-initdb.d/03-demo.sql:ro
+      - ./docker/02-app-user.sql:/docker-entrypoint-initdb.d/04-user.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-padmnovel"]
       interval: 5s
@@ -26,8 +29,8 @@ services:
       - "8080:80"
     environment:
       DB_HOST: db
-      DB_USER: root
-      DB_PASSWORD: admnovel
+      DB_USER: novel_app
+      DB_PASSWORD: novel-local-development
       DB_NAME: novel
       BASE_URL: http://localhost:8080/
       # 'development' expoe erros do PHP ao visitante (index.php).

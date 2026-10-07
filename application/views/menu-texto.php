@@ -1,9 +1,11 @@
 	<!-- Aqui é a área do conteúdo -->
-	<div id="conteudo" class="row">
-		<div class="row">
-				<h3 class="titulo-menu">Nível Texto</h3>
-		</div>
-		<div id="imagens-menu" class="centered" >
+    <div id="conteudo" class="novel-level-screen">
+        <section class="novel-level-hero">
+            <p class="novel-eyebrow">Missões de leitura</p>
+            <h3 class="titulo-menu">Escolha um desafio de texto</h3>
+            <p class="novel-level-copy">Leia com atenção, encontre os pontos de ortografia e avance na trilha.</p>
+        </section>
+        <div id="imagens-menu" class="novel-challenge-grid" >
 			<?php					
 
 					if(in_array("g_j&ch_x&s_z_x&c_ç_s_ss_sc_sç_xc&m_n&r_rr&e_i&o_u_l", $grafemasJogados)){
@@ -23,37 +25,26 @@
 							$grafemas[] = $grafemasTextos[$i];
 						}																
 					}										
-					echo '<div class="row afastado-1pc">';
 						array_pop($grafemas);
 						array_push($grafemas, "_total", "total");
 						$tamGrafemasUnicos = count($grafemas);
 						for($i = 0; $i<$tamGrafemasUnicos; $i++) {
-							if ($i==4){
-								echo '</div>';
-								echo '<div class="row afastado-1pc">';
-							}
+                        $grafema = $grafemas[$i];
+                        $concluido = in_array($grafema, $grafemasJogados);
+                        $url = 'texto/jogarTexto/'.rawurlencode($grafema);
+                        $imagem = 'assets/img/grafemas/texto/'.$grafema.'.png';
+                        $rotulo = strtoupper(str_replace(array('&', '_'), array(' + ', ' / '), $grafema));
 
-							echo '<div class="col-md-3 col-xs-3">';
-								echo '<div class="row centered">';
-									echo '<div class="col-md-12 col-xs-12">';
-										$url = 'texto/jogarTexto/'.$grafemas[$i];
-										echo '<a href="'.base_url($url).'">';
-											$url = 'assets/img/grafemas/texto/'.$grafemas[$i].'.png';
-											echo '<img class="img-texto img-responsive centered aa" src="'.base_url($url).'">';
+                        echo '<a class="novel-challenge-card" href="'.base_url($url).'">';
+                            echo '<span class="novel-stage-number">'.($i + 1).'</span>';
+                            if ($concluido) {
+                                echo '<span class="novel-complete-badge"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Concluída</span>';
+							}
+                            echo '<img class="img-texto img-responsive centered aa" src="'.novel_image_url($imagem).'" alt="Missão '.$rotulo.'">';
+                            echo '<strong>Texto '.($i + 1).'</strong>';
+                            echo '<small>'.$rotulo.'</small>';
 										echo '</a>';
-									echo '</div>';
-								echo '</div>';												
-							echo '<div class="row">';
-								$tamGrafemasJogados = count($grafemasJogados);
-								for ($j=0; $j < $tamGrafemasJogados; $j++) { 
-									if (($grafemasJogados[$j] == $grafemas[$i])){
-										echo '<span class="glyphicon glyphicon-check" aria-hidden="true"/>';
 									}								
-								}							
-							echo '</div>';		
-						echo '</div>';
-						}
-					echo '</div>';									
 			?>
 		</div>
 
@@ -77,7 +68,7 @@
 								echo '<tr>';
 									echo '<th class="titulo"> Sua resposta </th>';
 									echo '<th class="titulo"> Gabarito </th>';
-								echo '<tr>';
+                                echo '</tr>';
 								$i = 0;
 								foreach ($inputJogador as $input => $value) {
 									echo '<tr>';
@@ -104,24 +95,4 @@
 
 
 <!--Mostrar mensagem de erro se o o jogador ainda não estiver apto a jogar um texto-->
-<?php	
-	if ($erro){							
-		echo '<script language="javascript">';
-		echo  'alert("Você ainda não está apto! \nPara jogar este texto você precisa ter jogado os grafemas mostrados nos ícones de cada fase.")';	
-		echo '</script>';						
-	}
-?>	
-
-
-<script type="text/javascript">
-
-var abrir = document.getElementById("abrirModalGabarito").value;
-	if(abrir){
-			mostrarGabarito();	
-	} 
-
-	function mostrarGabarito(){		
-		$("#modalGabarito").modal();		
-	}
-
-</script>
+<?php if (!empty($erro)) { echo novel_notify('Para fazer este treino de texto, pratique primeiro os grafemas indicados no cartão.', 'warning'); } ?>

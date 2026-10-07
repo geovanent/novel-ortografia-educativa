@@ -1,9 +1,11 @@
 	<!-- Aqui é a área do conteúdo -->
-	<div id="conteudo" class="row">
-		<div class="row">
-				<h3 class="titulo-menu">Nível Teste</h3>
-		</div>
-		<div id="imagens-menu" class="centered" >		
+    <div id="conteudo" class="novel-level-screen">
+        <section class="novel-level-hero">
+            <p class="novel-eyebrow">Missões de prova</p>
+            <h3 class="titulo-menu">Escolha um teste</h3>
+            <p class="novel-level-copy">Mostre domínio das regras, some experiência e desbloqueie novas conquistas.</p>
+        </section>
+        <div id="imagens-menu" class="novel-challenge-grid" >
 				
 				<?php
 				$tamGrafemasBD = count($grafemasCadastrados);
@@ -19,36 +21,25 @@
 					$grafemasJogados[$cod] = "-total";
 				}
 
-				echo '<div class="row afastado-1pc">';
+                for($i = 0; $i<$tamGrafemasBD; $i++) {
+                    $grafema = $grafemasCadastrados[$i];
+                    $concluido = in_array($grafema, $grafemasJogados);
+                    $url = 'teste/jogarTeste/'.rawurlencode($grafema);
+                    $imagem = 'assets/img/grafemas/teste/'.$grafema.'.png';
+                    $rotulo = strtoupper(str_replace(array('&', '_'), array(' + ', ' / '), $grafema));
 
-				for($i = 0; $i<$tamGrafemasBD; $i++) {
-					if (($i%4)==0){
-						echo '</div>';
-						echo '<div class="row afastado-1pc">';
+                    echo '<a class="novel-challenge-card" href="'.base_url($url).'">';
+                        echo '<span class="novel-stage-number">'.($i + 1).'</span>';
+                        if ($concluido) {
+                            echo '<span class="novel-complete-badge"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Concluída</span>';
 					}					
-					echo '<div class="col-md-3 col-xs-3">';
-						echo '<div class="row">';
-							echo '<div class="col-md-12 col-xs-12">';
-								$url = 'teste/jogarTeste/'.$grafemasCadastrados[$i];
-								echo '<a href="'.base_url($url).'">';
-									$url = 'assets/img/grafemas/teste/'.$grafemasCadastrados[$i].'.png';
-									echo '<img  class="img img-responsive" src="'.base_url($url).'">';		
+                        echo '<img class="img img-responsive" src="'.novel_image_url($imagem).'" alt="Teste '.$rotulo.'">';
+                        echo '<strong>Teste '.($i + 1).'</strong>';
+                        echo '<small>'.$rotulo.'</small>';
 								echo '</a>';
-							echo '</div>';
-						echo '</div>';
-						echo '<div class="row">';
-							for ($j=0; $j < $tamGrafemasJogados; $j++) { 
-
-								if ($grafemasJogados[$j] == $grafemasCadastrados[$i]){
-									echo '<span class="glyphicon glyphicon-check" aria-hidden="true"/>';
 								}								
-							}
-							
-						echo '</div>';
-					echo '</div>';
-				}
-				echo '</div>';
 			?>
+        </div>
 
 		<input type="hidden" id="abrirModalGabarito" value="<?php echo ($abrirModalGabarito); ?>">		
 		<input type="hidden" id="abrirModalHistoria" value="<?php echo (isset($abrirModalHistoria[0]) ? $abrirModalHistoria[0] : ''); ?>">		
@@ -70,7 +61,7 @@
 								echo '<tr>';
 									echo '<th class="titulo"> Sua resposta </th>';
 									echo '<th class="titulo"> Gabarito </th>';
-								echo '<tr>';
+                                echo '</tr>';
 								$i = 0;
 								foreach ($inputJogador as $input => $value) {
 									echo '<tr>';
@@ -95,26 +86,4 @@
 	  </div>
 	</div>
 
-<?php
-	if ($erro){
-		echo '<script language="javascript">';
-			echo 'function mensagemErro(){';
-				echo 'alert("Você ainda não está apto! \nPara jogar este teste você precisa ter jogado os grafemas mostrados nos ícones de cada fase.");';
-			echo '}';
-			echo 'onload=mensagemErro();';
-		echo '</script>';
-	}
-?>
-
-<script type="text/javascript">
-
-var abrir = document.getElementById("abrirModalGabarito").value;
-	if(abrir){
-			mostrarGabarito();	
-	} 
-
-	function mostrarGabarito(){		
-		$("#modalGabarito").modal();		
-	}
-
-</script>
+<?php if (!empty($erro)) { echo novel_notify('Para fazer este teste, pratique primeiro os grafemas indicados no cartão.', 'warning'); } ?>
